@@ -23,11 +23,11 @@ class Binary {
         string BinToHex();
         string CongThem1();
         string DangBu2();
-        Binary* operator=(Binary target);
-        Binary& operator+(Binary other);
-        Binary& operator-(Binary other);
-        Binary& operator*(Binary other);
-        Binary& operator/(Binary other);
+        Binary* operator=(Binary* target);
+        Binary& operator+(Binary* other);
+        Binary& operator-(Binary* other);
+        Binary& operator*(Binary* other);
+        Binary& operator/(Binary* other);
 };
 
 class Hexadecimal {
