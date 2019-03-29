@@ -18,9 +18,16 @@ class Binary {
         string value;
         int length;
     public:
+        string clone();
         Binary(string s);
         string BinToHex();
-        bool operator=(Binary target);
+        string CongThem1();
+        string DangBu2();
+        Binary* operator=(Binary target);
+        Binary& operator+(Binary other);
+        Binary& operator-(Binary other);
+        Binary& operator*(Binary other);
+        Binary& operator/(Binary other);
 };
 
 class Hexadecimal {
@@ -115,7 +122,7 @@ bool Hexadecimal::operator=(Hexadecimal other) {
 
 Decimal::Decimal(string s) {
     value = s;
-    if (length > 38) length = 38;
+    if (length > 32) length = 32;
     else length = s.length();
 }
 
@@ -173,16 +180,91 @@ string Binary::BinToHex(){
     return result;
 }
 
-bool Binary::operator=(Binary other) {
-    if (this->length != other.length) return false;
-    if (this->value[0] != other.value[0]) {
-        int dem = 1; int ktra = 0;
-        while (dem < this->length) {
-            if (this->value[dem] != '0' || other.value[dem] != '0') ktra = 1;
-        }
-        if (ktra == 0) return true;
+string Binary::CongThem1() {
+    int du = 0;
+    int vt = this->length - 1;
+    int t = int(this->value[vt]) - 48 + 1 + du;
+    string s = this->value;
+    if (t == 1) {
+        s[vt] = '1';
+        return s;
     }
-    for (int i = 0 ; i < this->length; i++)
-        if (this->value[i] != other.value[i]) return false;
-    return true;
+    while(du != 0 && t < 2) {
+        switch(t) {
+            case 0: 
+                s[vt] = '0';
+                du = 0;
+                break;
+            case 1:
+                s[vt] = '1';
+                du = 0;
+                break;
+            case 2:
+                s[vt] = '0';
+                du = 1;
+                break;
+            case 3:
+                s[vt] = '1';
+                du = 1;
+                break;
+            vt--;
+            t = int(this->value[vt]) - 48 + 1 + du; 
+        }
+    }
+    return s;
+}
+
+srting Binary::DangBu2() {
+    auto clone = new Binary(this->value);
+    for (int i = 0 ;i < clone->length; i++) {
+        if (clone->value[i] == '0') clone->value[i] = '1';
+        else clone->value[i] = '0';
+    }
+    return clone->CongThem1();
+}
+
+Binary& Binary::operator=(Binary* other) {
+    this->length = other->length;
+    this->value = other->value;
+    return *this;
+}
+
+Binary& Binary::operator+(Binary* other) {
+   auto clone = new Brinary(this->value);
+   auto plus1 = new Decimal(clone->BinToDec());
+   auto plus2 = new Decimal(other->BinToDec());
+   auto plus = new Decimal("");
+   plus = plus1 + plus2;
+   auto result = new Binary(plus->DecToBin());
+   return *result;
+}
+
+Binary& Binary::operator-(Binary* other) {
+   auto clone = new Brinary(this->value);
+   auto minus1 = new Decimal(clone->BinToDec());
+   auto minus2 = new Decimal(other->BinToDec());
+   auto minus = new Decimal("");
+   minus = minus1 - minus2;
+   auto result = new Binary(minus->DecToBin());
+   return *result;
+}
+
+Binary& Binary::operator*(Binary* other) {
+   auto clone = new Brinary(this->value);
+   auto multi1 = new Decimal(clone->BinToDec());
+   auto multi2 = new Decimal(other->BinToDec());
+   auto multi = new Decimal("");
+   multi = multi1 * multi2;
+   auto result = new Binary(multi->DecToBin());
+   return *result;
+}
+
+Binary& Binary::operator/(Binary* other) {
+   auto clone = new Brinary(this->value);
+   auto divine1 = new Decimal(clone->BinToDec());
+   auto divine2 = new Decimal(other->BinToDec());
+   auto divine = new Decimal("");
+   divine = divine1 / divine2;
+   auto result = new Binary(multi->DecToBin());
+   return *result;
 }
