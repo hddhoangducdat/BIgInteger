@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
@@ -41,7 +42,247 @@ class Hexadecimal {
 };
 
 int main() {
-
+    string s;
+    vector<string> parse;
+    for (int i = 0 ; i < s.length(); i++){
+        int st;
+        while(s[i] != ' '){
+            st = st + s[i];
+            i++;
+        }
+        if (st.length() != 0) parse.push_back(st);
+    } 
+    if (parse[0] == "2") {
+        if (parse.size() == 3) {
+            if (parse[1] == "~") {
+                Binary calc(parse[2]);
+                cout << calc.not();
+            }
+            else if (parse[1] == "rol") {
+                Binary calc(parse[2]); 
+                cout << calc.rol();
+            }
+            else if (parse[1] == "ror") {
+                Binary calc(parse[2]); 
+                cout << calc.ror();
+            }
+            else if (parse[1] == "10") {
+                Binary calc(parse[2]); 
+                cout << calc.BinToDec();
+            }
+            else if (parse[1] == "16") {
+                Binary calc(parse[2]); 
+                cout << calc.BinToHex();
+            }
+        } 
+        else { // parse.size() == 4
+            if (parse[2] == "+") {
+                Binary calc1(parse[1]);
+                Binary calc2(parse[3]);
+                cout << calc1 + calc2; 
+            } 
+            else if (parse[2] == "-") {
+                Binary calc1(parse[1]);
+                Binary calc2(parse[3]);
+                cout << calc1 - calc2;
+            }
+            else if (parse[2] == "*") {
+                Binary calc1(parse[1]);
+                Binary calc2(parse[3]);
+                cout << calc1 * calc2;
+            }
+            else if (parse[2] == "/") {
+                Binary calc1(parse[1]);
+                Binary calc2(parse[3]);
+                cout << calc1 / calc2;
+            }
+            else if (parse[2] == ">>") {
+                Binary calc1(parse[1]);
+                int calc2 = 0;
+                for (int i = 0 ; i < parse[3].length(); i++) {
+                    calc2 = calc2 * 10 + int(parse[3][i]) - 48;
+                }
+                cout << calc1.DichPhai(calc2);
+            }
+            else if (parse[2] == "<<") {
+                Binary calc1(parse[1]);
+                int calc2 = 0;
+                for (int i = 0 ; i < parse[3].length(); i++) {
+                    calc2 = calc2 * 10 + int(parse[3][i]) - 48;
+                }
+                cout << calc1.DichTrai(calc2);
+            }
+            else if (parse[2] == "&") {
+                Binary calc1(parse[1]);
+                Binary calc2(parse[3]);
+                cout << calc1 & calc2;
+            }
+            else if (parse[2] == "|") {
+                Binary calc1(parse[1]);
+                Binary calc2(parse[3]);
+                cout << calc1 | calc2;
+            }
+            else if (parse[2] == "^") {
+                Binary calc1(parse[1]);
+                Binary calc1(parse[3]);
+                cout << calc1 ^ calc2;
+            }
+        }
+    }
+    else if (parse[0] == "10") {
+        if (parse.size() == 3) {
+            if (parse[1] == "~") {
+                Decimal calc(parse[2]);
+                cout << calc.not();
+            }
+            else if (parse[1] == "rol") {
+                Decimal calc(parse[2]); 
+                cout << calc.rol();
+            }
+            else if (parse[1] == "ror") {
+                Decimal calc(parse[2]); 
+                cout << calc.ror();
+            }
+            else if (parse[1] == "2") {
+                Decimal calc(parse[2]); 
+                cout << calc.DecToBin();
+            }
+            else if (parse[1] == "16") {
+                Decimal calc(parse[2]); 
+                cout << calc.DecToHex();
+            }
+        } 
+        else { // parse.size() == 4
+            if (parse[2] == "+") {
+                Decimal calc1(parse[1]);
+                Decimal calc2(parse[3]);
+                cout << calc1 + calc2; 
+            } 
+            else if (parse[2] == "-") {
+                Decimal calc1(parse[1]);
+                Decimal calc2(parse[3]);
+                cout << calc1 - calc2;
+            }
+            else if (parse[2] == "*") {
+                Decimal calc1(parse[1]);
+                Decimal calc2(parse[3]);
+                cout << calc1 * calc2;
+            }
+            else if (parse[2] == "/") {
+                Decimal calc1(parse[1]);
+                Decimal calc2(parse[3]);
+                cout << calc1 / calc2;
+            }
+            else if (parse[2] == ">>") {
+                Decimal calc1(parse[1]);
+                int calc2 = 0;
+                for (int i = 0 ; i < parse[3].length(); i++) {
+                    calc2 = calc2 * 10 + int(parse[3][i]) - 48;
+                }
+                cout << calc1.DichPhai(calc2);
+            }
+            else if (parse[2] == "<<") {
+                Decimal calc1(parse[1]);
+                int calc2 = 0;
+                for (int i = 0 ; i < parse[3].length(); i++) {
+                    calc2 = calc2 * 10 + int(parse[3][i]) - 48;
+                }
+                cout << calc1.DichTrai(calc2);
+            }
+            else if (parse[2] == "&") {
+                Decimal calc1(parse[1]);
+                Decimal calc2(parse[3]);
+                cout << calc1 & calc2;
+            }
+            else if (parse[2] == "|") {
+                Decimal calc1(parse[1]);
+                Decimal calc2(parse[3]);
+                cout << calc1 | calc2;
+            }
+            else if (parse[2] == "^") {
+                Decimal calc1(parse[1]);
+                Decimal calc2(parse[3]);
+                cout << calc1 ^ calc2;
+            }
+        }
+    }
+    else { // parse[0] == '16'
+        if (parse.size() == 3) {
+            if (parse[1] == "~") {
+                Hexadecimal calc(parse[2]);
+                cout << calc.not();
+            }
+            else if (parse[1] == "rol") {
+                Hexadecimal calc(parse[2]); 
+                cout << calc.rol();
+            }
+            else if (parse[1] == "ror") {
+                Hexadecimal calc(parse[2]); 
+                cout << calc.ror();
+            }
+            else if (parse[1] == "2") {
+                Hexadecimal calc(parse[2]); 
+                cout << calc.HexToBin();
+            }
+            else if (parse[1] == "10") {
+                Hexadecimal calc(parse[2]); 
+                cout << calc.HexToDec();
+            }
+        } 
+        else { // parse.size() == 4
+            if (parse[2] == "+") {
+                Hexadecimal calc1(parse[1]);
+                Hexadecimal calc2(parse[3]);
+                cout << calc1 + calc2; 
+            } 
+            else if (parse[2] == "-") {
+                Hexadecimal calc1(parse[1]);
+                Hexadecimal calc2(parse[3]);
+                cout << calc1 - calc2;
+            }
+            else if (parse[2] == "*") {
+                Hexadecimal calc1(parse[1]);
+                Hexadecimal calc2(parse[3]);
+                cout << calc1 * calc2;
+            }
+            else if (parse[2] == "/") {
+                Hexadecimal calc1(parse[1]);
+                Hexadecimal calc2(parse[3]);
+                cout << calc1 / calc2;
+            }
+            else if (parse[2] == ">>") {
+                Hexadecimal calc1(parse[1]);
+                int calc2 = 0;
+                for (int i = 0 ; i < parse[3].length(); i++) {
+                    calc2 = calc2 * 10 + int(parse[3][i]) - 48;
+                }
+                cout << calc1.DichPhai(calc2);
+            }
+            else if (parse[2] == "<<") {
+                Hexadecimal calc1(parse[1]);
+                int calc2 = 0;
+                for (int i = 0 ; i < parse[3].length(); i++) {
+                    calc2 = calc2 * 10 + int(parse[3][i]) - 48;
+                }
+                cout << calc1.DichTrai(calc2);
+            }
+            else if (parse[2] == "&") {
+                Hexadecimal calc1(parse[1]);
+                Hexadecimal calc2(parse[3]);
+                cout << calc1 & calc2;
+            }
+            else if (parse[2] == "|") {
+                Hexadecimal calc1(parse[1]);
+                Hexadecimal calc2(parse[3]);
+                cout << calc1 | calc2;
+            }
+            else if (parse[2] == "^") {
+                Hexadecimal calc1(parse[1]);
+                Hexadecimal calc2(parse[3]);
+                cout << calc1 ^ calc2;
+            }
+        }
+    }
 }
 
 //----------------------------------
@@ -111,13 +352,6 @@ string Hexadecimal::HexToBin() {
     return result;
 }
 
-bool Hexadecimal::operator=(Hexadecimal other) {
-    if (this->length != other.length) return false;
-    for (int i = 0 ; i < this->length; i++)
-        if (this->value[i] != other.value[i]) return false;
-    return true;
-}
-
 //-----------------------------------------------
 
 Decimal::Decimal(string s) {
@@ -129,8 +363,12 @@ Decimal::Decimal(string s) {
 bool Decimal::operator=(Decimal other) {
     if (this->length != other.length) return false;
     for (int i = 0 ; i < this->length; i++)
+        if (thisth) return false;
+    for (int i = 0 ; i < this->length; i++)
         if (this->value[i] != other.value[i]) return false;
-    return true;
+    return true;th) return false;
+    for (int i = 0 ; i < this->length; i++)
+        if (this->value[i] != other.value[i]) return false;
 }
 
 //-----------------------------------------
@@ -236,7 +474,7 @@ Binary& Binary::operator+(Binary* other) {
    auto plus = new Decimal("");
    plus = plus1 + plus2;
    auto result = new Binary(plus->DecToBin());
-   return *result;
+   return *result; 
 }
 
 Binary& Binary::operator-(Binary* other) {
