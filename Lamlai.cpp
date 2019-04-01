@@ -8,9 +8,9 @@ using namespace std;
 class Binary {
     private:
         vector<char> value;
-        int l, r;
     public:
         Binary(string);
+        string Div2(string);
         Binary(string, int);
         string clone();
         Binary Bu2();
@@ -34,6 +34,20 @@ class Binary {
         string ToString();
 };
 
+class Tool {
+    private: 
+        string value;
+    public:
+        Tool(string);
+        string getT();
+        int getL();
+        char getLast();
+        Tool operator=(Tool);
+        void Div2();
+        bool Dung();
+        Tool operator+(Tool);
+};
+
 int main() {
     return 0;
 }
@@ -41,16 +55,86 @@ int main() {
 Binary::Binary(string target) {
     for (int i = 0 ; i < 128; i++) this->value.push_back('0');
     int length = target.length() < 128 ? target.length() : 128; 
-    r = 127;
-    l = r - length + 1;
+    int r = 127;
+    int l = r - length + 1;
     this->value[0] = target[0];
     for (int i = 1 ; i < length; i++) 
         if (i < 128) this->value[l + i] = target[i]; 
-    l++;
 }
 
 Binary::Binary(string target, int heso) {
-    
+    int k = 128;
+    vector <char> kq;
+    for (int i = 0 ; i < 128; i++) kq.push_back('0');
+    if (heso == 10) {
+        Tool X(target);
+        while (X.Dung()) {
+            kq[k] = char((X.getLast() - '0') % 2 + '0'); 
+            X.Div2();
+            k--;
+        }
+    }
+    else {
+        for (int i = target.length() ; i >= 0 ; i--) {
+            string s;
+            switch(target[i]) {
+                case '0':
+                    s = "0000";
+                    break;
+                case '1':
+                    s = "0001";
+                    break;
+                case '2':
+                    s = "0010";
+                    break;
+                case '3':
+                    s = "0011";
+                    break;
+                case '4':
+                    s = "0100";
+                    break;
+                case '5':
+                    s = "0101";
+                    break;
+                case '6':
+                    s = "0110";
+                    break;
+                case '7':
+                    s = "0111";
+                    break;
+                case '8':
+                    s = "1000";
+                    break;
+                case '9':
+                    s = "1001";
+                    break;
+                case 'A':
+                    s = "1010";
+                    break;
+                case 'B':
+                    s = "1011";
+                    break;
+                case 'C':
+                    s = "1100";
+                    break;
+                case 'D':
+                    s = "1101";
+                    break;
+                case 'E':
+                    s = "1110";
+                    break;
+                case 'F':
+                    s = "1111";
+                    break;
+            }
+            if (k - 1 >= 0) kq[k--] = s[3];
+            if (k - 1 >= 0) kq[k--] = s[2];
+            if (k - 1 >= 0) kq[k--] = s[1];
+            if (k - 1 >= 0) kq[k--] = s[0];
+        }
+    }
+    for (int i = 0 ; i < 128 ; i ++) this->value.push_back(kq[i]);
+    if (target[0] == '-') *this = this->Bu2();
 }
 
 string Binary::clone(){
@@ -66,7 +150,7 @@ Binary Binary::Bu2(){
     for (int i = 0 ; i < 128; i++){
         if (this->value[i] == '1') tmp.value[i] = '0';
         else tmp.value[i] = '1';
-    } 
+    }   
     Binary cong1("01");
     return tmp + cong1;
 }
@@ -76,7 +160,30 @@ string Binary::BinToDec() {
 }
 
 string Binary::BinToHex() {
-
+    string kq;
+    for (int i = 0 ; i < 128 ; i++) {
+        string tmp;
+        for (int j = i ; j < i + 4 ; j++) {
+            tmp = tmp + this->value[j];
+        }
+        if (tmp == "0000") kq = kq + '0';
+        else if (tmp == "0001") kq = kq + '1';
+        else if (tmp == "0010") kq = kq + '2';
+        else if (tmp == "0011") kq = kq + '3';
+        else if (tmp == "0100") kq = kq + '4';
+        else if (tmp == "0101") kq = kq + '5';
+        else if (tmp == "0110") kq = kq + '6';
+        else if (tmp == "0111") kq = kq + '7';
+        else if (tmp == "1000") kq = kq + '8';
+        else if (tmp == "1001") kq = kq + '9';
+        else if (tmp == "1010") kq = kq + 'A';
+        else if (tmp == "1011") kq = kq + 'B';
+        else if (tmp == "1100") kq = kq + 'C';
+        else if (tmp == "1101") kq = kq + 'D';
+        else if (tmp == "1110") kq = kq + 'E';
+        else if (tmp == "1111") kq = kq + 'F';
+    }
+    return kq;
 }
 
 Binary Binary::operator=(Binary other){
@@ -200,3 +307,58 @@ Binary Binary::operator/(Binary other) {
     return q;
 }
 
+//---------------------------------------------
+
+Tool::Tool(string s) {
+    int vt = s[0] == '-' ? 1 : 0;
+    string tmp;
+    for (int i = vt ; i < s.length(); i++) tmp = tmp + s[i];
+    this->value = tmp;
+}
+
+string Tool::getT() {
+    return this->value;
+}
+
+int Tool::getL() {
+    return this->value.length();
+}
+
+char Tool::getLast() {
+    return this->value[this->getL() - 1];
+}
+
+Tool Tool::operator=(Tool other) {
+    this->value = other.value;
+    return *this;
+}
+
+void Tool::Div2() {
+    string result;
+    int du = this->value[0] - '0'; 
+    int vt = 0;
+    while (vt < this->getL() - 1) {
+        if (du < 2) {
+            vt++;
+            int chia = du * 10 + int(this->value[vt] - '0');
+            chia /= 2;
+            result = result + char(chia + 48);
+            du -= 2 * chia;
+        } 
+        else {
+            int chia = du / 2;
+            result = result + char(chia + 48);
+            du -= 2 * chia;
+        }
+    } 
+    this->value = result;
+}
+
+bool Tool::Dung() {
+    if (this->getL() == 1 && this->getL() < '2') return true;
+    return false;
+}
+
+Tool Tool::operator+(Tool other) {
+    while (other->getL() > this->getL())
+}
