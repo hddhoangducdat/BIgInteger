@@ -8,6 +8,7 @@ using namespace std;
 class Binary {
     private:
         vector<char> value;
+        int lastbit;
     public:
         Binary(string);
         string Div2(string);
@@ -53,13 +54,18 @@ int main() {
 }
 
 Binary::Binary(string target) {
+    bool dau = false;
+    if (target[0] == '1') {
+        for (int i = 0 ; i < target.length(); i++) target[i] = target[i] == '0' ? '1' : '0';
+        dau = true;
+    }
     for (int i = 0 ; i < 128; i++) this->value.push_back('0');
     int length = target.length() < 128 ? target.length() : 128; 
     int r = 127;
     int l = r - length + 1;
-    this->value[0] = target[0];
     for (int i = 1 ; i < length; i++) 
         if (i < 128) this->value[l + i] = target[i]; 
+    if (dau) *this = this->Bu2();
 }
 
 Binary::Binary(string target, int heso) {
@@ -137,15 +143,15 @@ Binary::Binary(string target, int heso) {
     if (target[0] == '-') *this = this->Bu2();
 }
 
-string Binary::clone(){
+string Binary::clone() {
     string s;
-    for (int i = 0; i < 128 ; i++) {
+    for (int i = 0; i < 128 ; i++) { 
         s = s + this->value[i];
     }
     return s;
 }
 
-Binary Binary::Bu2(){
+Binary Binary::Bu2() {
     auto tmp = *this;
     for (int i = 0 ; i < 128; i++){
         if (this->value[i] == '1') tmp.value[i] = '0';
@@ -360,5 +366,27 @@ bool Tool::Dung() {
 }
 
 Tool Tool::operator+(Tool other) {
-    while (other->getL() > this->getL())
+    string kq;
+    auto tmp1 = *this;
+    auto tmp2 = other;
+    while (tmp1.getL() > tmp2.getL()) tmp2.value = '0' + tmp2.value;
+    while (tmp2.getL() > tmp1.getL()) tmp1.value = '0' + tmp1.value;
+    int du = 0;
+    for (int i = tmp1.getL() - 1 ; i >= 0 ; i--) {
+        int c1 = tmp1.value[i] - '0';
+        int c2 = tmp2.value[i] - '0';
+        int t = c1 + c2 + du;
+        if (t > 9) {
+            du = 1;
+            kq = char(t - 10 + 48) + kq;
+        }
+        else {
+            du = 0;
+            kq = char(t + 48) + kq;
+        }
+    }
+    if (du == 1) kq = '1' + kq;
+    Tool result(kq);
+    return result;
 }
+
