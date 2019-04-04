@@ -5,6 +5,270 @@
 
 using namespace std;
 
+class Decimal  // cần class này để hỗ trợ tính toán chuyển từ Binary -> Decimal
+{
+private:
+	string value;
+	int length;
+public:
+	Decimal(string string);
+	string standardized(string &number); //Hàm chuẩn hoá chuỗi
+	string operator+(Decimal b);
+	string operator - (Decimal b);
+	string operator * (Decimal b);
+};
+Decimal::Decimal(string string)
+{
+	value = string;
+	length = string.length();
+}
+
+string Decimal::standardized(string &number)
+{
+	bool sign = false; // false = không có dấu
+	if (number[0] == '-')
+	{
+		sign = true;
+		number.erase(0, 1); // xoá dấu
+	}
+	while ((number[0] - '0') == 0)
+	{
+		number.erase(0, 1);
+	}
+	if (sign == true)
+		number.insert(0, 1, '-');// thêm lại dấu
+	return number;
+}
+
+
+string Decimal::operator + (Decimal other)
+{
+	string temp = this->value; // sao lưu chuối gốc, tránh làm thay đổi chuỗi 
+	string number = other.value;   // sao lưu chuối gốc, tránh làm thay đổi chuỗi 
+	string result = (value.length() > number.length()) ? value : number;
+	bool sign = true; // true = dương, false = âm
+	char mem = '0'; // biến nhớ khi cộng
+	if ((temp[0] == '-' && number[0] != '-') || (temp[0] != '-' && number[0] == '-')) // kiểu tra xem số có dấu hay không
+	{
+		if (temp[0] == '-') // a+b . nếu a mang dấu -
+		{
+			temp.erase(0, 1);
+			Decimal a = Decimal(temp);
+			result = other - a; // kết quả = b-a;
+		}
+
+		if (number[0] == '-') // a+b . nếu b mang dấu -
+		{
+			number.erase(0, 1);
+			Decimal a = Decimal(temp);
+			Decimal b = Decimal(number);
+			result = a - b; // kết quả = a-b;
+		}
+	}
+
+	else
+	{
+		if (temp[0] == '-'&& number[0] == '-')
+		{
+			temp.erase(0, 1); // loại bỏ dấu
+			number.erase(0, 1); // loại bỏ dấu 
+			result = (temp.length() > number.length()) ? temp : number;
+			sign = false;  // lưu dấu, sẽ chèn lại dấu khi có kết quả cuối cùng
+		}
+		if (temp.length() > number.length())
+			number.insert(0, temp.length() - number.length(), '0');
+		else
+			if (number.length() > temp.length())
+				temp.insert(0, number.length() - temp.length(), '0');
+		for (int i = temp.length() - 1; i >= 0; i--)
+		{
+			result[i] = ((temp[i] - '0') + (number[i] - '0') + (mem - '0')) + '0';
+			if (i != 0)
+			{
+				if ((result[i] - '0') > 9)
+				{
+					mem = '1';  // nhớ 1
+					result[i] = ((result[i] - '0') - 10) + '0';
+				}
+				else
+					mem = '0';
+			}
+		}
+		if ((result[0] - '0') > 9)
+		{
+			result[0] = ((result[0] - '0') - 10) + '0';
+			result.insert(0, 1, '1');
+		}
+		if (sign == false)
+			result.insert(0, 1, '-');
+	}
+	return result;
+}
+
+string Decimal::operator-(Decimal other)
+{
+	string temp = this->value; // sao lưu chuối gốc, tránh làm thay đổi chuỗi 
+	string number = other.value;   // sao lưu chuối gốc, tránh làm thay đổi chuỗi 
+	string result = (value.length() > number.length()) ? value : number;
+	bool check = true; // biến để lưu giá trị kiểm tra xem số nào lớn hơn
+	bool sign = true; // true= dương, false = dương
+	char mem = '0'; // biến nhớ khi cộng
+	//------- cân bằng chuỗi . Ex: 7777
+	//-------                     -37
+
+	//------- sẽ thành             7777
+	//-------                     -0037
+	if ((temp[0] == '-' && number[0] != '-') || (temp[0] != '-' && number[0] == '-')) // kiểu tra xem số có dấu hay không
+	{
+		if (temp[0] == '-') // a-b . nếu a mang dấu -
+		{
+			temp.erase(0, 1);
+			Decimal a = Decimal(temp);
+			result = a + other; // kết quả = b-a;
+			result.insert(0, 1, '-');
+		}
+
+		if (number[0] == '-') // a+b . nếu b mang dấu -
+		{
+			number.erase(0, 1);
+			Decimal a = Decimal(temp);
+			Decimal b = Decimal(number);
+			result = a + b; // kết quả = a-b;
+		}
+	}
+	else
+	{
+		if (temp[0] == '-'&& number[0] == '-')
+		{
+			temp.erase(0, 1);
+			number.erase(0, 1);
+			result = (temp.length() > number.length()) ? temp : number;
+			sign = false;
+
+		}
+		if (temp.length() > number.length())
+			number.insert(0, temp.length() - number.length(), '0');
+		else
+			if (number.length() > temp.length())
+				temp.insert(0, number.length() - temp.length(), '0');
+		//------- So sánh chuỗi xem số nào lớn hơn
+		for (int i = 0; i < temp.length(); i++)
+		{
+			if ((temp[i] - '0') == (number[i] - '0'))
+			{
+				continue;
+			}
+			else
+			{
+				if ((temp[i] - '0') > (number[i] - '0'))
+				{
+					break;
+				}
+				else
+				{
+					check = false;
+					break;
+				}
+			}
+		}
+		//------ Bắt đầu tính toán
+		for (int i = temp.length() - 1; i >= 0; i--)
+		{
+			if (check == true) // Nếu số trừ lớn hơn số bị trừ. For ex: 444-433;
+			{
+				result[i] = ((temp[i] - '0') - (number[i] - '0') - (mem - '0')) + '0';
+				if (i != 0)
+				{
+					if ((result[i] - '0') < 0)
+					{
+
+						result[i] = ((temp[i] - '0') + 10 - (number[i] - '0') - (mem - '0')) + '0';
+						mem = '1';  // nhớ 1
+					}
+					else
+						mem = '0';
+				}
+			}
+			else  // Số trừ bé hơn số bị trừ. For ex: 333-344
+			{
+				result[i] = ((number[i] - '0') - (temp[i] - '0') - (mem - '0')) + '0';
+				if (i != 0)
+				{
+					if ((result[i] - '0') < 0)
+					{
+
+						result[i] = ((number[i] - '0') + 10 - (temp[i] - '0') - (mem - '0')) + '0';
+						mem = '1';  // nhớ 1
+					}
+					else
+						mem = '0';
+				}
+			}
+		}
+		if (check == false)
+		{
+			result.insert(0, 1, '-');
+		}
+		else
+			if (sign == false)
+				result.insert(0, 1, '-');
+	}
+	return result;
+}
+
+string Decimal::operator*(Decimal b)
+{
+	int *res;
+	string temp = value;
+	string number = b.value;
+	string result;
+	bool sign = true; // true = dương, false = ấm
+	if ((temp[0] == '-' && number[0] != '-') || (temp[0] != '-' && number[0] == '-'))
+	{
+		if (temp[0] == '-')
+		{
+			temp.erase(0, 1); // xoá dấu
+			sign = false;  // là số âm
+		}
+		if (number[0] == '-')
+		{
+			number.erase(0, 1);
+			sign = false;
+		}
+	}
+	if (temp[0] == '-' && number[0] == '-')
+	{
+		temp.erase(0, 1);
+		number.erase(0, 1);
+	}
+	res = new int[temp.size() + number.size()];
+	for (int i = 0; i <= temp.size() + number.size(); i++)
+		res[i] = 0;
+
+	for (int i = temp.size() - 1; i >= 0; i--) {
+		for (int j = number.size() - 1; j >= 0; j--)
+			res[i + 1 + j] += (temp[i] - '0') * (number[j] - '0');
+	}
+
+	for (int i = temp.size() + number.size(); i >= 0; i--)
+		if (res[i] > 9) {
+			res[i - 1] += res[i] / 10;
+			res[i] %= 10;
+		}
+	for (int i = 0; i < temp.size() + number.size(); i++)
+		result += (res[i] + '0');
+	if (sign == false)
+		result.insert(0, 1, '-');
+	return result;
+}
+//-------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------
+
 class Binary {
     private:
         vector<char> value;
@@ -161,8 +425,72 @@ Binary Binary::Bu2() {
     return tmp + cong1;
 }
 
-string Binary::BinToDec() {
+string Binary::BinToDec()  
+{
     
+	string mu; /// lưu phần có mũ... ví dụ 2^2
+	Decimal Two = Decimal("2");
+	string result = "0"; /// lưu kết quả số thập phân sau khi chuyển đổi
+
+	for (int i = Bin.length() - 1; i >= 0; i--)
+	{
+		mu = "2";
+		if ((Bin[i] - '0') == 0) // nếu bit =0 thì bỏ qua
+			continue;
+
+		else
+		{
+			//-----------trường hợp mũ 0
+			if (i == Bin.length() - 1 )
+			{
+				if (i == 0 && (Bin[0] - '0') == 1)
+				{
+					mu = "-1";
+					result = mu;
+					break;
+				}
+				else
+				{
+					mu = "1";
+					result = mu;
+					continue;
+				}
+			}
+			//-----------trường hợp mũ 1
+			if (i == Bin.length() - 2)
+			{
+				//dec = add(dec, mu);
+				if ((Bin[0] - '0') == 1 && i == 0) // nếu bit đầu là 1 thì nó vừa mang dấu vừa mang giá trị
+				{
+					mu.insert(0, 1, '-');
+				}
+				else
+				{
+					Decimal DEC = Decimal(result);
+					Decimal MU = Decimal(mu);
+					result = DEC + MU; // dùng toán tử + của class Decimal
+					continue;
+				}
+			
+			}
+			else//-----------trường hợp còn lại
+				for (int j = i; j <= Bin.length() - 3; j++)
+				{
+					Decimal MU = Decimal(mu);
+					mu = MU * Two;    // dùng toán tử * của class Decimal
+				}
+		}
+		if ((Bin[0] - '0') == 1 && i==0) // nếu bit đầu là 1 thì nó vừa mang dấu vừa mang giá trị
+		{
+			mu.insert(0, 1, '-');
+		}
+		Decimal MU = Decimal(mu);
+		Decimal DEC = Decimal(result);
+
+		result = MU + DEC;   // dùng toán tử + của class Decimal
+	}
+	standardized(result); // chuẩn hoá ( bỏ các số không ở đầu chuỗi)
+	return result;
 }
 
 string Binary::BinToHex() {
@@ -388,5 +716,86 @@ Tool Tool::operator+(Tool other) {
     if (du == 1) kq = '1' + kq;
     Tool result(kq);
     return result;
+}
+string Binary::operator&(Binary number)
+{
+	string temp = Bin;
+	string other = number.Bin;
+	string result= (length > number.length) ? temp : other;
+	if (this->length < number.length)
+		temp.insert(0, number.length - this->length, '0');
+	else
+		if(this->length > number.length)
+			other.insert(0, this->length- number.length, '0');
+	for (int i = temp.length()-1; i >= 0; i--)
+	{
+		if ((temp[i] - '0') == 0)
+		{
+			result[i] = '0';
+		}
+		else
+		{
+			if ((other[i] - '0') == 0)
+				result[i] = '0';
+			else
+				result[i] = '1';
+		}
+	}
+	return result;
+}
+string Binary::operator|(Binary number)
+{
+	string temp = Bin;
+	string other = number.Bin;
+	string result = (length > number.length) ? temp : other;
+	if (this->length < number.length)
+		temp.insert(0, number.length - this->length, '0');
+	else
+		if (this->length > number.length)
+			other.insert(0, this->length - number.length, '0');
+	for (int i = temp.length() - 1; i >= 0; i--)
+	{
+		if ((temp[i] - '0') == 1)
+		{
+			result[i] = '1';
+		}
+		else
+		{
+			if ((other[i] - '0') == 0)
+				result[i] = '0';
+			else
+				result[i] = '1';
+		}
+	}
+	return result;
+}
+string Binary::operator^(Binary number)
+{
+	string temp = Bin;
+	string other = number.Bin;
+	string result = (length > number.length) ? temp : other;
+	if (this->length < number.length)
+		temp.insert(0, number.length - this->length, '0');
+	else
+		if (this->length > number.length)
+			other.insert(0, this->length - number.length, '0');
+	for (int i = temp.length() - 1; i >= 0; i--)
+	{
+		if ((temp[i] - '0') == 1)
+		{
+			if ((other[i] - '0') == 0)
+				result[i] = '1';
+			else
+				result[i] = '0';
+		}
+		else
+		{
+			if ((other[i] - '0') == 0)
+				result[i] = '0';
+			else
+				result[i] = '1';
+		}
+	}
+	return result;
 }
 
